@@ -1,4 +1,4 @@
-import {InferSelectModel} from "drizzle-orm";
+import {InferSelectModel, sql} from "drizzle-orm";
 import {jsonb, pgTable, text, uuid, varchar} from "drizzle-orm/pg-core";
 import {createInsertSchema} from "drizzle-zod";
 import {z} from "zod/v4";
@@ -8,7 +8,9 @@ import {TransformationConfig} from "@/types";
 import {mediaTypeEnum, timestamps} from "./columns-helpers";
 
 export const media = pgTable("media", {
-  id: uuid("id").defaultRandom().primaryKey(),
+  id: uuid("id")
+    .default(sql`gen_random_uuid()`)
+    .primaryKey(),
   fileName: varchar("file_name", {length: 255}).notNull(),
   originalUrl: text("original_url").notNull(),
   transformedUrl: text("transformed_url").default(""),

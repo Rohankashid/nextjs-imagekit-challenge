@@ -128,9 +128,10 @@ export type AiMagic = {
   };
   shadowLighting?: {
     dropShadow?: {
-      azimuth?: number; // 0–360
-      elevation?: number; // 0–90
-      saturation?: number; // 0–100
+      blur?: number; // 0–15, default 10
+      saturation?: number; // 0–100, default 30
+      offsetX?: number; // 0–100 or N100, default 2
+      offsetY?: number; // 0–100 or N100, default 2
     };
   };
   generation?: {

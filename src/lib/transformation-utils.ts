@@ -221,12 +221,14 @@ function aiToParams(ai: AiMagic): string[] {
       parts.push(bg.mode === "economy" ? "e-bgremove" : "e-removedotbg");
     }
     if (bg.changePrompt) {
-      parts.push(`e-changebg-prompt-${bg.changePrompt}`);
+      parts.push(`e-changebg-prompt-${encodeURIComponent(bg.changePrompt)}`);
     }
     if (bg.generativeFill) {
       const g = bg.generativeFill;
       let val = "bg-genfill";
-      if (g.prompt) val += `-prompt-${g.prompt}`;
+      if (g.prompt) {
+        val += `-prompt-${encodeURIComponent(g.prompt)}`;
+      }
       parts.push(val);
       if (g.width) parts.push(`w-${g.width}`);
       if (g.height) parts.push(`h-${g.height}`);
@@ -236,24 +238,35 @@ function aiToParams(ai: AiMagic): string[] {
 
   if (ai.editing) {
     const e = ai.editing;
-    if (e.prompt) parts.push(`e-edit-prompt-${e.prompt}`);
+    if (e.prompt) parts.push(`e-edit-prompt-${encodeURIComponent(e.prompt)}`);
     if (e.retouch) parts.push("e-retouch");
     if (e.upscale) parts.push("e-upscale");
   }
 
   if (ai.shadowLighting?.dropShadow) {
     const s = ai.shadowLighting.dropShadow;
-    let val = "e-dropshadow";
-    if (s.azimuth !== undefined) val += `-az-${s.azimuth}`;
-    if (s.elevation !== undefined) val += `-el-${s.elevation}`;
-    if (s.saturation !== undefined) val += `-st-${s.saturation}`;
-    parts.push(val);
+    const shadowParams: string[] = [];
+
+    if (s.blur !== undefined) shadowParams.push(`bl-${s.blur}`);
+    if (s.saturation !== undefined) shadowParams.push(`st-${s.saturation}`);
+    if (s.offsetX !== undefined) {
+      const xVal = s.offsetX < 0 ? `N${Math.abs(s.offsetX)}` : s.offsetX;
+      shadowParams.push(`x-${xVal}`);
+    }
+    if (s.offsetY !== undefined) {
+      const yVal = s.offsetY < 0 ? `N${Math.abs(s.offsetY)}` : s.offsetY;
+      shadowParams.push(`y-${yVal}`);
+    }
+
+    if (shadowParams.length > 0) {
+      parts.push(`e-shadow-${shadowParams.join("_")}`);
+    }
   }
 
   if (ai.generation) {
     const g = ai.generation;
     if (g.textPrompt) {
-      parts.push(`ik-genimg-prompt-${g.textPrompt}`);
+      parts.push(`ik-genimg-prompt-${encodeURIComponent(g.textPrompt)}`);
     }
     if (g.variation) parts.push("e-genvar");
   }
@@ -318,7 +331,16 @@ export function buildImageKitUrl(
       ? `${url.search.replace(/^\?/, "")}&tr=${tr}`
       : `tr=${tr}`;
 
-    return `${base}?${search}`;
+    const finalUrl = `${base}?${search}`;
+
+    // Debug logging for AI Magic transformations
+    if (config.type === "IMAGE" && config.ai) {
+      console.log("AI Magic config:", config.ai);
+      console.log("Generated transformation string:", tr);
+      console.log("Final URL:", finalUrl);
+    }
+
+    return finalUrl;
   } catch {
     return src.includes("?") ? `${src}&tr=${tr}` : `${src}?tr=${tr}`;
   }

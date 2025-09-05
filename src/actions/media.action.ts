@@ -41,6 +41,7 @@ export const createMedia = async (
     const [newMedia] = await db
       .insert(media)
       .values({
+        id: crypto.randomUUID(),
         fileName,
         originalUrl,
         mediaType,
