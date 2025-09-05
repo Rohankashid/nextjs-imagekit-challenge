@@ -93,27 +93,54 @@ export type SolidBlock = {
 export type Overlay = ImageOverlay | TextOverlay | GradientBlock | SolidBlock;
 
 export type Enhancements = {
-  blur?: number; // bl (0–100)
-  sharpen?: number; // e-sharpen (0–10)
-  shadow?: {
-    blur?: number; // bl
-    saturation?: number; // st
-    offsetX?: number; // x
-    offsetY?: number; // y
+  blur?: number;
+  grayscale?: boolean;
+  opacity?: number;
+
+  contrast?: boolean;
+  sharpen?: number;
+  unsharpMask?: {
+    radius?: number; // e-usm radius
+    sigma?: number; // e-usm sigma
+    amount?: number; // e-usm amount
+    threshold?: number; // e-usm threshold
   };
+
+  shadow?: {
+    blur?: number; // e-shadow bl (0–15)
+    saturation?: number; // e-shadow st (0–100)
+    offsetX?: number; // e-shadow x (0–100 or N100)
+    offsetY?: number; // e-shadow y (0–100 or N100)
+  };
+  gradient?: {
+    direction?: number | string; // e-gradient ld (0–359 or direction string)
+    fromColor?: string; // e-gradient from (hex color)
+    toColor?: string; // e-gradient to (hex color)
+    stopPoint?: number | string; // e-gradient sp (0.01–0.99 or >1)
+  };
+
   background?: {
     type: "solid" | "blurred" | "dominant";
-    color?: string; // for solid
-    blurIntensity?: number | "auto"; // for blurred
-    brightness?: number; // -255 to 255
+    color?: string; // for solid (hex color)
+    blurIntensity?: number | "auto"; // for blurred (0–100 or auto)
+    brightness?: number; // for blurred (-255 to 255)
   };
+
+  trim?: number | boolean; // t (1–99 or true)
+  border?: {
+    width: number; // b width
+    color: string; // b color (hex)
+  };
+  rotate?: number | "auto";
+  flip?: "h" | "v" | "h_v";
+  radius?: number | "max";
 };
 
 export type AiMagic = {
   background?: {
-    remove?: boolean; // e-removedotbg or e-bgremove
+    remove?: boolean;
     mode?: "standard" | "economy";
-    changePrompt?: string; // e-changebg
+    changePrompt?: string;
     generativeFill?: {
       prompt?: string;
       width?: number;
@@ -122,25 +149,25 @@ export type AiMagic = {
     };
   };
   editing?: {
-    prompt?: string; // e-edit
-    retouch?: boolean; // e-retouch
-    upscale?: boolean; // e-upscale
+    prompt?: string;
+    retouch?: boolean;
+    upscale?: boolean;
   };
   shadowLighting?: {
     dropShadow?: {
-      blur?: number; // 0–15, default 10
-      saturation?: number; // 0–100, default 30
-      offsetX?: number; // 0–100 or N100, default 2
-      offsetY?: number; // 0–100 or N100, default 2
+      blur?: number;
+      saturation?: number;
+      offsetX?: number;
+      offsetY?: number;
     };
   };
   generation?: {
-    textPrompt?: string; // ik-genimg
-    variation?: boolean; // e-genvar
+    textPrompt?: string;
+    variation?: boolean;
   };
   cropping?: {
     type?: "smart" | "face" | "object";
-    objectName?: string; // for object aware
+    objectName?: string;
     zoom?: number;
     width?: number;
     height?: number;

@@ -149,21 +149,49 @@ function videoOverlaysToParams(overlays: VideoOverlay[]): string[] {
   return parts;
 }
 
-/* ---------------- ENHANCEMENTS ---------------- */
-
 function enhancementsToParams(enh: Enhancements): string[] {
   const parts: string[] = [];
   if (enh.blur) parts.push(`bl-${enh.blur}`);
-  if (enh.sharpen) parts.push(`e-sharpen-${enh.sharpen}`);
+  if (enh.grayscale) parts.push("e-grayscale");
+  if (enh.opacity !== undefined) parts.push(`o-${enh.opacity}`);
+
+  if (enh.contrast) parts.push("e-contrast");
+  if (enh.sharpen !== undefined) parts.push(`e-sharpen-${enh.sharpen}`);
+  if (enh.unsharpMask) {
+    const usm = enh.unsharpMask;
+    const usmParts = ["e-usm"];
+    if (usm.radius !== undefined) usmParts.push(`${usm.radius}`);
+    if (usm.sigma !== undefined) usmParts.push(`${usm.sigma}`);
+    if (usm.amount !== undefined) usmParts.push(`${usm.amount}`);
+    if (usm.threshold !== undefined) usmParts.push(`${usm.threshold}`);
+    parts.push(usmParts.join("-"));
+  }
   if (enh.shadow) {
     const s = enh.shadow;
     const shadowParts: string[] = ["e-shadow"];
     if (s.blur !== undefined) shadowParts.push(`bl-${s.blur}`);
     if (s.saturation !== undefined) shadowParts.push(`st-${s.saturation}`);
-    if (s.offsetX !== undefined) shadowParts.push(`x-${s.offsetX}`);
-    if (s.offsetY !== undefined) shadowParts.push(`y-${s.offsetY}`);
+    if (s.offsetX !== undefined) {
+      const xVal = s.offsetX < 0 ? `N${Math.abs(s.offsetX)}` : s.offsetX;
+      shadowParts.push(`x-${xVal}`);
+    }
+    if (s.offsetY !== undefined) {
+      const yVal = s.offsetY < 0 ? `N${Math.abs(s.offsetY)}` : s.offsetY;
+      shadowParts.push(`y-${yVal}`);
+    }
     parts.push(shadowParts.join("_"));
   }
+
+  if (enh.gradient) {
+    const g = enh.gradient;
+    const gradientParts = ["e-gradient"];
+    if (g.direction !== undefined) gradientParts.push(`ld-${g.direction}`);
+    if (g.fromColor) gradientParts.push(`from-${g.fromColor}`);
+    if (g.toColor) gradientParts.push(`to-${g.toColor}`);
+    if (g.stopPoint !== undefined) gradientParts.push(`sp-${g.stopPoint}`);
+    parts.push(gradientParts.join("_"));
+  }
+
   if (enh.background) {
     const bg = enh.background;
     if (bg.type === "solid" && bg.color) parts.push(`bg-${bg.color}`);
@@ -175,13 +203,28 @@ function enhancementsToParams(enh: Enhancements): string[] {
     }
     if (bg.type === "dominant") parts.push("bg-dominant");
   }
+
+  if (enh.trim !== undefined) {
+    if (enh.trim === true) parts.push("t-true");
+    else parts.push(`t-${enh.trim}`);
+  }
+  if (enh.border) parts.push(`b-${enh.border.width}_${enh.border.color}`);
+  if (enh.rotate !== undefined) {
+    if (enh.rotate === "auto") parts.push("rt-auto");
+    else parts.push(`rt-${enh.rotate}`);
+  }
+  if (enh.flip) parts.push(`fl-${enh.flip}`);
+  if (enh.radius !== undefined) {
+    if (enh.radius === "max") parts.push("r-max");
+    else parts.push(`r-${enh.radius}`);
+  }
+
   return parts;
 }
 
 function videoEnhancementsToParams(enh: VideoEnhancements): string[] {
   const parts: string[] = [];
 
-  // trimming
   if (enh.trimming) {
     const t = enh.trimming;
     if (t.startOffset !== undefined) parts.push(`so-${t.startOffset}`);
@@ -189,7 +232,6 @@ function videoEnhancementsToParams(enh: VideoEnhancements): string[] {
     if (t.duration !== undefined) parts.push(`du-${t.duration}`);
   }
 
-  // thumbnail transforms
   if (enh.thumbnail) {
     const th = enh.thumbnail;
     if (th.time !== undefined) parts.push(`so-${th.time}`);
@@ -209,8 +251,6 @@ function videoEnhancementsToParams(enh: VideoEnhancements): string[] {
 
   return parts;
 }
-
-/* ---------------- AI MAGIC ---------------- */
 
 function aiToParams(ai: AiMagic): string[] {
   const parts: string[] = [];
@@ -284,15 +324,12 @@ function aiToParams(ai: AiMagic): string[] {
   return parts;
 }
 
-/* ---------------- AUDIO ---------------- */
 function audioToParams(a: VideoAudio): string[] {
   const p: string[] = [];
   if (a.mute) p.push("ac-none");
   if (a.extractAudio) p.push("vc-none");
   return p;
 }
-
-/* ---------------- MASTER BUILDER ---------------- */
 
 export function buildTrString(config: TransformationConfig): string {
   const parts: string[] = [];
@@ -333,7 +370,6 @@ export function buildImageKitUrl(
 
     const finalUrl = `${base}?${search}`;
 
-    // Debug logging for AI Magic transformations
     if (config.type === "IMAGE" && config.ai) {
       console.log("AI Magic config:", config.ai);
       console.log("Generated transformation string:", tr);
