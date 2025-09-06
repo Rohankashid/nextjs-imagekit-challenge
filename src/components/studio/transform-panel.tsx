@@ -4,6 +4,7 @@ import {TransformationConfig} from "@/types";
 import {AiMagicPanel} from "./ai-magic-panel";
 import {EnhancementsPanel} from "./enhancements-panel";
 import {ImageBasicsPanel} from "./image-basics-panel";
+import {OverlaysPanel} from "./overlays-panel";
 
 type TransformPanelProps = {
   activeSection: SectionKey;
@@ -49,7 +50,18 @@ export function TransformPanel({
           return <>Video Basics</>;
         }
       case "overlays":
-        return <p>Overlays & Effects</p>;
+        if (transforms.type === "IMAGE") {
+          return (
+            <OverlaysPanel
+              overlays={transforms.overlays || []}
+              onOverlaysChange={overlays =>
+                onTransformChange({...transforms, overlays})
+              }
+            />
+          );
+        } else if (transforms.type === "VIDEO") {
+          return <>Video Overlays</>;
+        }
       case "enhancements":
         if (transforms.type === "IMAGE") {
           return (

@@ -41,33 +41,74 @@ export type FlipMode = "h" | "v" | "h_v";
 
 export type ImageOverlay = {
   type: "image";
-  src: string; // i
-  width?: number; // w
-  height?: number; // h
-  x?: number; // position
-  y?: number;
-  opacity?: number; // o (0–100)
-  bgColor?: string; // bg
-  border?: string; // b e.g. "5_FFF000"
-  radius?: number | "max"; // r
-  rotation?: number; // rt
-  flip?: FlipMode; // fl
+  src: string;
+  width?: number | string;
+  height?: number | string;
+  aspectRatio?: string;
+  x?: number | string;
+  y?: number | string;
+  opacity?: number;
+  bgColor?: string;
+  border?: {
+    width: number;
+    color: string;
+  };
+  radius?: number | "max";
+  rotation?: number;
+  flip?: FlipMode;
+  cropMode?: "extract" | "pad_resize";
+  focus?: string;
+  zoom?: number;
+  trim?: boolean | number;
+  blur?: number;
+  quality?: number;
+  dpr?: number | "auto";
+  // Effects
+  grayscale?: boolean;
+  contrast?: boolean;
+  sharpen?: number;
+  unsharpMask?: {
+    radius: number;
+    sigma: number;
+    amount: number;
+    threshold: number;
+  };
+  shadow?: {
+    blur: number;
+    saturation: number;
+    offsetX: number;
+    offsetY: number;
+  };
+  gradient?: {
+    direction: number | string;
+    fromColor: string;
+    toColor: string;
+    stopPoint: number | string;
+  };
 };
 
 export type TextOverlay = {
   type: "text";
-  text: string; // i
-  fontSize?: number; // fs
-  fontFamily?: string; // ff
-  color?: string; // co
-  backgroundColor?: string; // bg
-  padding?: string; // pa shorthand
-  align?: "left" | "center" | "right"; // lfo
-  bold?: boolean;
-  italic?: boolean;
-  strike?: boolean;
+  text: string;
+  width?: number | string;
+  fontSize?: number | string;
+  fontFamily?: string;
+  color?: string;
+  backgroundColor?: string;
+  padding?: string;
+  align?: "left" | "center" | "right";
+  x?: number | string;
+  y?: number | string;
+  opacity?: number;
+  lineHeight?: number | string;
+  typography?: {
+    bold?: boolean;
+    italic?: boolean;
+    strikethrough?: boolean;
+  };
   rotation?: number; // rt
   flip?: FlipMode; // fl
+  radius?: number | "max"; // r
 };
 
 export type GradientBlock = {
@@ -84,10 +125,18 @@ export type GradientBlock = {
 export type SolidBlock = {
   type: "solid";
   color: string; // bg
-  width?: number;
-  height?: number;
-  opacity?: number;
-  radius?: number;
+  width?: number | string;
+  height?: number | string;
+  x?: number | string;
+  y?: number | string;
+  opacity?: number; 
+  radius?: number | "max"; // r
+  gradient?: {
+    direction: number | string;
+    fromColor: string;
+    toColor: string;
+    stopPoint: number | string;
+  };
 };
 
 export type Overlay = ImageOverlay | TextOverlay | GradientBlock | SolidBlock;
@@ -100,36 +149,36 @@ export type Enhancements = {
   contrast?: boolean;
   sharpen?: number;
   unsharpMask?: {
-    radius?: number; // e-usm radius
-    sigma?: number; // e-usm sigma
-    amount?: number; // e-usm amount
-    threshold?: number; // e-usm threshold
+    radius?: number;
+    sigma?: number;
+    amount?: number;
+    threshold?: number;
   };
 
   shadow?: {
-    blur?: number; // e-shadow bl (0–15)
-    saturation?: number; // e-shadow st (0–100)
-    offsetX?: number; // e-shadow x (0–100 or N100)
-    offsetY?: number; // e-shadow y (0–100 or N100)
+    blur?: number;
+    saturation?: number;
+    offsetX?: number;
+    offsetY?: number;
   };
   gradient?: {
-    direction?: number | string; // e-gradient ld (0–359 or direction string)
-    fromColor?: string; // e-gradient from (hex color)
-    toColor?: string; // e-gradient to (hex color)
-    stopPoint?: number | string; // e-gradient sp (0.01–0.99 or >1)
+    direction?: number | string;
+    fromColor?: string;
+    toColor?: string;
+    stopPoint?: number | string;
   };
 
   background?: {
     type: "solid" | "blurred" | "dominant";
-    color?: string; // for solid (hex color)
-    blurIntensity?: number | "auto"; // for blurred (0–100 or auto)
-    brightness?: number; // for blurred (-255 to 255)
+    color?: string;
+    blurIntensity?: number | "auto";
+    brightness?: number;
   };
 
-  trim?: number | boolean; // t (1–99 or true)
+  trim?: number | boolean;
   border?: {
-    width: number; // b width
-    color: string; // b color (hex)
+    width: number;
+    color: string;
   };
   rotate?: number | "auto";
   flip?: "h" | "v" | "h_v";
