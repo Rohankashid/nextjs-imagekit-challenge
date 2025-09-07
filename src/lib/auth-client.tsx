@@ -119,14 +119,12 @@ export function useAuth() {
 // Export auth functions for direct use
 export const signIn = {
   email: async (
-    {email, password}: {email: string; password: string},
-    p0: {onRequest: () => void; onResponse: () => void}
+{ email, password }: { email: string; password: string; }, p0: { onRequest: () => void; onResponse: () => void; },
   ) => {
     await signInWithEmailAndPassword(auth, email, password);
   },
   social: async (
-    {provider}: {provider: string; callbackURL?: string},
-    p0: {onRequest: () => void; onResponse: () => void}
+{ provider }: { provider: string; callbackURL?: string; }, p0: { onRequest: () => void; onResponse: () => void; },
   ) => {
     if (provider === "google") {
       await signInWithPopup(auth, googleProvider);

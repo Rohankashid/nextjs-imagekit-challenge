@@ -5,8 +5,6 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 
 import {Loader2, X} from "lucide-react";
-import {toast} from "sonner";
-
 import {Button} from "@/components/ui/button";
 import {
   Card,
@@ -27,7 +25,6 @@ export default function SignUp() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -167,13 +164,4 @@ export default function SignUp() {
       </CardContent>
     </Card>
   );
-}
-
-async function convertImageToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
 }
