@@ -1,6 +1,7 @@
 import {useState} from "react";
 
 import {ImageIcon, VideoIcon} from "lucide-react";
+import {toast} from "sonner";
 
 import {Spinner} from "@/components/spinner";
 import {Slider} from "@/components/ui/slider";
@@ -61,6 +62,9 @@ export function PreviewCanvas({
               onError={() => {
                 setHasError(true);
                 setIsLoading(false);
+                toast.error(
+                  "Preview failed to load. If the network shows 403 Forbidden, this feature may require an enabled extension or you've hit its limit."
+                );
               }}
             />
           ) : (
@@ -72,6 +76,9 @@ export function PreviewCanvas({
               onError={() => {
                 setHasError(true);
                 setIsLoading(false);
+                toast.error(
+                  "Preview failed to load. If the network shows 403 Forbidden, this feature may require an enabled extension or you've hit its limit."
+                );
               }}
             />
           )}

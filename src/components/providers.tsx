@@ -1,4 +1,5 @@
 import {ThemeProvider as NextThemesProvider} from "next-themes";
+import {AuthProvider} from "@/lib/auth-client";
 
 const Providers = ({children}: {children: React.ReactNode}) => {
   return (
@@ -9,7 +10,7 @@ const Providers = ({children}: {children: React.ReactNode}) => {
         enableSystem
         disableTransitionOnChange
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </NextThemesProvider>
     </>
   );

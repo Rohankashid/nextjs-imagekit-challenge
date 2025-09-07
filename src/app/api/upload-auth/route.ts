@@ -1,14 +1,33 @@
-import {NextResponse} from "next/server";
+import { NextResponse } from "next/server";
+import { getUploadAuthParams } from "@imagekit/next/server";
+import { env } from "@/env";
+import { getAuth } from "firebase-admin/auth";
+import { initializeApp, getApps, cert } from "firebase-admin/app";
 
-import {getUploadAuthParams} from "@imagekit/next/server";
+// Initialize Firebase Admin once
+if (!getApps().length) {
+  initializeApp({
+    credential: cert({
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      clientEmail: process.env.NEXT_PUBLIC_FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.NEXT_PUBLIC_FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    }),
+  });
+}
 
-import {env} from "@/env";
-
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    // Your application logic to authenticate the user
-    // For now, we'll allow all uploads, but you can add authentication logic here
-    const {token, expire, signature} = getUploadAuthParams({
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const idToken = authHeader.split(" ")[1];
+    const decodedToken = await getAuth().verifyIdToken(idToken);
+    const uid = decodedToken.uid;
+
+    // Get ImageKit auth params
+    const { token, expire, signature } = getUploadAuthParams({
       privateKey: env.IMAGEKIT_PRIVATE_KEY,
       publicKey: env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
     });
@@ -18,12 +37,13 @@ export async function GET() {
       expire,
       signature,
       publicKey: env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY,
+      folder: `/users/${uid}`, // 👈 send back user folder
     });
   } catch (error) {
     console.error("Upload auth error:", error);
     return NextResponse.json(
-      {error: "Failed to generate upload authentication parameters"},
-      {status: 500}
+      { error: "Failed to generate upload authentication parameters" },
+      { status: 500 }
     );
   }
 }

@@ -62,16 +62,6 @@ export default function SignIn() {
               />
             </div>
 
-            {/* <div className="flex items-center gap-2">
-                <Checkbox
-                  id="remember"
-                  onClick={() => {
-                    setRememberMe(!rememberMe);
-                  }}
-                />
-                <Label htmlFor="remember">Remember me</Label>
-              </div> */}
-
 
 
           <Button

@@ -3,7 +3,7 @@
 import {revalidatePath} from "next/cache";
 import {cache} from "react";
 
-import {count, desc, eq} from "drizzle-orm";
+import {and, count, desc, eq} from "drizzle-orm";
 
 import {db} from "@/db";
 import {
@@ -34,7 +34,7 @@ export const createMedia = async (
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const {fileName, originalUrl, mediaType, transformationConfig} =
+  const {userId, fileName, originalUrl, mediaType, transformationConfig} =
     validationResult.params!;
 
   try {
@@ -42,6 +42,7 @@ export const createMedia = async (
       .insert(media)
       .values({
         id: crypto.randomUUID(),
+        userId,
         fileName,
         originalUrl,
         mediaType,
@@ -97,7 +98,7 @@ export const getMedia = cache(
 
 export const getAllMedia = cache(
   async (
-    params: PaginatedSearchParams
+    params: PaginatedSearchParams & {userId: string}
   ): Promise<ActionResponse<{media: SelectMediaModel[]; isNext: boolean}>> => {
     const validationResult = await action({
       params,
@@ -110,13 +111,17 @@ export const getAllMedia = cache(
     }
 
     const {page = 1, pageSize = 10, filter} = validationResult.params!;
+    const {userId} = params;
     const skip = (Number(page) - 1) * pageSize;
     const limit = Number(pageSize);
 
     try {
-      const whereCondition = filter
+      const typeCondition = filter
         ? eq(media.mediaType, filter.toUpperCase() as "IMAGE" | "VIDEO")
         : undefined;
+      const whereCondition = typeCondition
+        ? and(eq(media.userId, userId), typeCondition)
+        : eq(media.userId, userId);
 
       const [totalResult] = await db
         .select({count: count()})

@@ -8,6 +8,7 @@ import {
   UploadResponse,
   upload,
 } from "@imagekit/next";
+import {getAuth} from "firebase/auth";
 
 import {createMedia} from "@/actions";
 import type {SelectMediaModel} from "@/db/schema/media";
@@ -36,7 +37,17 @@ export const useImageKitUpload = () => {
 
   const authenticator = useCallback(async () => {
     try {
-      const response = await fetch("/api/upload-auth");
+      const user = getAuth().currentUser;
+      if (!user) throw new Error("Not authenticated");
+
+      const idToken = await user.getIdToken();
+
+      const response = await fetch("/api/upload-auth", {
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+        },
+      });
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(
@@ -45,8 +56,9 @@ export const useImageKitUpload = () => {
       }
 
       const data = await response.json();
-      const {signature, expire, token, publicKey} = data;
-      return {signature, expire, token, publicKey};
+      const {signature, expire, token, publicKey, folder} = data;
+
+      return {signature, expire, token, publicKey, folder};
     } catch (error) {
       console.error("Authentication error:", error);
       throw new Error("Authentication request failed");
@@ -111,6 +123,7 @@ export const useImageKitUpload = () => {
           : "VIDEO";
 
         const result = await createMedia({
+          userId: getAuth().currentUser?.uid || "",
           fileName: fileData.file.name,
           originalUrl: uploadResponse.url!,
           mediaType,
@@ -124,6 +137,15 @@ export const useImageKitUpload = () => {
             result.error?.message || "Failed to save to database"
           );
         }
+
+        try {
+          // Notify listeners (e.g., media grid) that a new item is available
+          if (typeof window !== "undefined" && result.data) {
+            window.dispatchEvent(
+              new CustomEvent("media:uploaded", {detail: result.data as any})
+            );
+          }
+        } catch {}
 
         return result.data;
       } catch (error) {
@@ -165,7 +187,7 @@ export const useImageKitUpload = () => {
           ...authParams,
           file: fileData.file,
           fileName: fileData.file.name,
-          folder: options.folder,
+          folder: options.folder ?? authParams.folder,
           useUniqueFileName: options.useUniqueFileName ?? true,
           tags: options.tags,
           isPrivateFile: options.isPrivateFile ?? false,

@@ -1,7 +1,7 @@
 "use client";
 
 import {useRouter} from "next/navigation";
-import {useMemo, useState, useTransition} from "react";
+import {useEffect, useMemo, useState, useTransition} from "react";
 
 import {toast} from "sonner";
 
@@ -38,6 +38,27 @@ export default function StudioClient({media}: StudioClientProps) {
     () => buildImageKitUrl(srcUrl, history.state),
     [srcUrl, history.state]
   );
+  useEffect(() => {
+    let aborted = false;
+    const check = async () => {
+      try {
+        const res = await fetch(
+          `/api/check-transform?u=${encodeURIComponent(builtUrl)}`
+        );
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!aborted && data.status === 403) {
+          toast.error(
+            "You may have exceeded your extension limits or need to enable this feature in your ImageKit plan."
+          );
+        }
+      } catch {}
+    };
+    check();
+    return () => {
+      aborted = true;
+    };
+  }, [builtUrl]);
 
   const onSave = async () => {
     startTransition(async () => {

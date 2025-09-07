@@ -11,6 +11,7 @@ export const media = pgTable("media", {
   id: uuid("id")
     .default(sql`gen_random_uuid()`)
     .primaryKey(),
+  userId: varchar("user_id", {length: 255}),
   fileName: varchar("file_name", {length: 255}).notNull(),
   originalUrl: text("original_url").notNull(),
   transformedUrl: text("transformed_url").default(""),
@@ -42,6 +43,7 @@ const baseSchema = createInsertSchema(media, {
 });
 
 export const createMediaSchema = z.object({
+  userId: z.string({message: "Please provide a valid user ID."}),
   fileName: baseSchema.shape.fileName,
   originalUrl: baseSchema.shape.originalUrl,
   mediaType: baseSchema.shape.mediaType,
