@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {useRouter} from "next/navigation";
+import type React from "react";
 import {useEffect, useState} from "react";
 
 import {AlertCircle, Eye, EyeOff, Lock, Mail} from "lucide-react";
@@ -47,9 +48,10 @@ export default function SignInPage() {
     try {
       await signInWithEmail(email, password);
       router.push("/");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as {message?: string};
       console.error("Sign in error:", error);
-      setError(error.message || "Failed to sign in. Please try again.");
+      setError(err?.message || "Failed to sign in. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -61,10 +63,11 @@ export default function SignInPage() {
     try {
       await signInWithGoogle();
       router.push("/");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as {message?: string};
       console.error("Google sign in error:", error);
       setError(
-        error.message || "Failed to sign in with Google. Please try again."
+        err?.message || "Failed to sign in with Google. Please try again."
       );
     } finally {
       setLoading(false);
@@ -202,7 +205,7 @@ export default function SignInPage() {
 
             <div className="text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/auth/signup"
                   className="font-medium text-pink-600 hover:text-pink-700 dark:text-pink-400 dark:hover:text-pink-300 transition-colors"

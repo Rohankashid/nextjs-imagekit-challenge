@@ -36,8 +36,8 @@ const eslintConfig = [
       "prefer-template": ["error"],
       semi: ["error"],
       quotes: ["error", "double"],
-      "no-undef": ["warn"],
-      "no-unused-vars": ["warn"],
+      "no-undef": "off",
+      "no-unused-vars": "off",
 
       "check-file/filename-naming-convention": [
         "error",

@@ -26,7 +26,7 @@ export type SectionKey =
   | "audio";
 
 export type StudioDockProps = {
-  onSelect?: (section: SectionKey) => void;
+  onSelect?: (value: SectionKey) => void;
   activeSection?: SectionKey;
   isVideo?: boolean;
 };
@@ -52,8 +52,8 @@ export function StudioDock({
   const [mouseX, setMouseX] = React.useState<number>(0);
   const wrapperRef = React.useRef<HTMLDivElement | null>(null);
 
-  function handleSelect(section: SectionKey) {
-    onSelect?.(section);
+  function handleSelect(next: SectionKey) {
+    onSelect?.(next);
   }
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {

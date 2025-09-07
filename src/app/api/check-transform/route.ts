@@ -8,7 +8,7 @@ export async function GET(req: Request) {
 
     const res = await fetch(url, {method: "HEAD", redirect: "follow"});
     return NextResponse.json({status: res.status});
-  } catch (e) {
+  } catch {
     return NextResponse.json({status: 500}, {status: 200});
   }
 }

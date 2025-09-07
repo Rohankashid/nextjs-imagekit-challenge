@@ -1,4 +1,5 @@
 import {getMedia} from "@/actions";
+/* global RouteParams */
 import NotFound from "@/app/not-found";
 import StudioClient from "@/components/studio/studio-client";
 

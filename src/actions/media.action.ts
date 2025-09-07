@@ -1,5 +1,6 @@
 "use server";
 
+/* global ActionResponse, ErrorResponse */
 import {revalidatePath} from "next/cache";
 import {cache} from "react";
 

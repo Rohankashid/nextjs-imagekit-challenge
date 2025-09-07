@@ -7,6 +7,7 @@ import {getAuth} from "firebase/auth";
 import AuthGuard from "@/components/auth-guard";
 import GridLoader from "@/components/media/grid-loader";
 import MasonryGrid from "@/components/media/masonry-grid";
+import type {SelectMediaModel} from "@/db/schema/media";
 
 export default function Home() {
   return (
@@ -39,7 +40,7 @@ export default function Home() {
 
 function MediaGrid() {
   const [loading, setLoading] = useState(true);
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<SelectMediaModel[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -57,9 +58,10 @@ function MediaGrid() {
         });
         if (!res.ok) throw new Error("Failed to load media");
         const data = await res.json();
-        setItems(data.media || []);
-      } catch (e: any) {
-        setError(e.message || "Failed to load media");
+        setItems((data.media || []) as SelectMediaModel[]);
+      } catch (e: unknown) {
+        const err = e as {message?: string};
+        setError(err?.message || "Failed to load media");
       } finally {
         setLoading(false);
       }

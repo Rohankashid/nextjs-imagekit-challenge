@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type React from "react";
 import {useEffect, useRef, useState} from "react";
 
 import {Image, Video} from "@imagekit/next";

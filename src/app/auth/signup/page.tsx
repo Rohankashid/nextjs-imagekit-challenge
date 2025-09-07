@@ -2,18 +2,13 @@
 
 import Link from "next/link";
 import {useRouter} from "next/navigation";
+import type React from "react";
 import {useEffect, useState} from "react";
 
 import {AlertCircle, CheckCircle, Eye, EyeOff, Lock, Mail} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {signInWithGoogle, signUpWithEmail} from "@/lib/auth";
@@ -84,9 +79,10 @@ export default function SignUpPage() {
       setTimeout(() => {
         router.push("/");
       }, 1500);
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as {message?: string};
       console.error("Sign up error:", error);
-      setError(error.message || "Failed to create account. Please try again.");
+      setError(err?.message || "Failed to create account. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -99,10 +95,11 @@ export default function SignUpPage() {
     try {
       await signInWithGoogle();
       router.push("/");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as {message?: string};
       console.error("Google sign up error:", error);
       setError(
-        error.message || "Failed to sign up with Google. Please try again."
+        err?.message || "Failed to sign up with Google. Please try again."
       );
     } finally {
       setLoading(false);

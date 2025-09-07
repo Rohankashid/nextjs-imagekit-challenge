@@ -66,7 +66,6 @@ export function AuthProvider({children}: {children: ReactNode}) {
 
   const signInSocial = async ({
     provider,
-    callbackURL,
   }: {
     provider: string;
     callbackURL?: string;
@@ -119,15 +118,10 @@ export function useAuth() {
 
 // Export auth functions for direct use
 export const signIn = {
-  email: async ({ email, password }: { email: string; password: string; }, p0?: { onRequest: (ctx: any) => void; onResponse: (ctx: any) => void; }) => {
+  email: async ({email, password}: {email: string; password: string}) => {
     await signInWithEmailAndPassword(auth, email, password);
   },
-  social: async ({
-  provider, callbackURL,
-}: {
-  provider: string;
-  callbackURL?: string;
-}, p0: { onRequest: (ctx: any) => void; onResponse: (ctx: any) => void; }) => {
+  social: async ({provider}: {provider: string; callbackURL?: string}) => {
     if (provider === "google") {
       await signInWithPopup(auth, googleProvider);
     } else {
@@ -137,7 +131,7 @@ export const signIn = {
 };
 
 export const signUp = {
-  email: async ({email, password}: {email: string; password: string; name:string;image:any;callbackURL:string;fetchOptions:any}) => {
+  email: async ({email, password}: {email: string; password: string}) => {
     await createUserWithEmailAndPassword(auth, email, password);
   },
 };

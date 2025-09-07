@@ -520,7 +520,7 @@ export function AiMagicPanel({aiMagic, onAiMagicChange}: AiMagicPanelProps) {
                             shadowLighting: {
                               ...aiMagic.shadowLighting,
                               dropShadow: {
-                                ...aiMagic.shadowLighting?.dropShadow!,
+                                ...(aiMagic.shadowLighting?.dropShadow ?? {}),
                                 blur,
                               },
                             },
@@ -554,7 +554,7 @@ export function AiMagicPanel({aiMagic, onAiMagicChange}: AiMagicPanelProps) {
                             shadowLighting: {
                               ...aiMagic.shadowLighting,
                               dropShadow: {
-                                ...aiMagic.shadowLighting?.dropShadow!,
+                                ...(aiMagic.shadowLighting?.dropShadow ?? {}),
                                 saturation,
                               },
                             },
@@ -587,7 +587,7 @@ export function AiMagicPanel({aiMagic, onAiMagicChange}: AiMagicPanelProps) {
                             shadowLighting: {
                               ...aiMagic.shadowLighting,
                               dropShadow: {
-                                ...aiMagic.shadowLighting?.dropShadow!,
+                                ...(aiMagic.shadowLighting?.dropShadow ?? {}),
                                 offsetX,
                               },
                             },
@@ -620,7 +620,7 @@ export function AiMagicPanel({aiMagic, onAiMagicChange}: AiMagicPanelProps) {
                             shadowLighting: {
                               ...aiMagic.shadowLighting,
                               dropShadow: {
-                                ...aiMagic.shadowLighting?.dropShadow!,
+                                ...(aiMagic.shadowLighting?.dropShadow ?? {}),
                                 offsetY,
                               },
                             },

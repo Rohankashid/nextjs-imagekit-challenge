@@ -1,8 +1,9 @@
 "use client";
 
+import NextImage from "next/image";
 import {useState} from "react";
 
-import {Image, Square, Trash2, Type} from "lucide-react";
+import {Image as ImageIcon, Square, Trash2, Type} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -103,17 +104,25 @@ export function OverlaysPanel({
     }
   };
 
-  const updateOverlay = (index: number, updates: any) => {
-    const newOverlays = overlays.map((overlay, i) =>
-      i === index ? {...overlay, ...updates} : overlay
-    );
-    onOverlaysChange(newOverlays);
+  const updateOverlay = (
+    index: number,
+    updates: Partial<ImageOverlay> | Partial<TextOverlay> | Partial<SolidBlock>
+  ) => {
+    const newOverlays = overlays.map((overlay, i) => {
+      if (i !== index) return overlay;
+      if (overlay.type === "image")
+        return {...overlay, ...(updates as Partial<ImageOverlay>)};
+      if (overlay.type === "text")
+        return {...overlay, ...(updates as Partial<TextOverlay>)};
+      return {...overlay, ...(updates as Partial<SolidBlock>)};
+    });
+    onOverlaysChange(newOverlays as Overlay[]);
   };
 
   const getOverlayIcon = (overlay: Overlay) => {
     switch (overlay.type) {
       case "image":
-        return <Image className="h-4 w-4" />;
+        return <ImageIcon className="h-4 w-4" />;
       case "text":
         return <Type className="h-4 w-4" />;
       case "solid":
@@ -146,7 +155,7 @@ export function OverlaysPanel({
           onClick={() => addOverlay("image")}
           className="flex items-center gap-2"
         >
-          <Image className="h-4 w-4" />
+          <ImageIcon className="h-4 w-4" />
           Add Image
         </Button>
         <Button
@@ -252,44 +261,21 @@ export function OverlaysPanel({
                             with ImageKit.
                           </p>
                         )}
-                        {overlay.src &&
-                          overlay.src.includes("istockphoto.com") && (
-                            <div className="text-xs text-yellow-600">
-                              <p>
-                                External stock photo URLs may not work
-                                reliably with ImageKit overlays.
-                              </p>
-                              <div className="mt-2 space-y-1">
-                                <button
-                                  onClick={() =>
-                                    updateOverlay(index, {
-                                      src: "sample-image.jpg",
-                                    })
-                                  }
-                                  className="block w-full px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200"
-                                >
-                                  Use simple example instead
-                                </button>
-                                <p className="text-xs text-gray-500">
-                                   Better: Upload images to your ImageKit
-                                  media library
-                                </p>
-                              </div>
-                            </div>
-                          )}
                         {overlay.src && (
                           <div className="mt-2">
-                            <img
+                            <NextImage
                               src={
                                 overlay.src.startsWith("http")
                                   ? overlay.src
                                   : `https://ik.imagekit.io/jb2brt3jy/${overlay.src}`
                               }
                               alt="Overlay preview"
-                              className="max-w-full max-h-40 rounded border"
-                              onError={e => {
-                                e.currentTarget.src =
-                                  "https://via.placeholder.com/200x200?text=Invalid+URL";
+                              width={200}
+                              height={200}
+                              unoptimized
+                              className="max-w-full max-h-40 rounded border h-auto w-auto"
+                              onError={() => {
+                                // no-op fallback (avoid mutating DOM src directly)
                               }}
                             />
                           </div>

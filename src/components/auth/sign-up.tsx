@@ -12,7 +12,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -165,7 +164,7 @@ export default function SignUp() {
                   onRequest: () => {
                     setLoading(true);
                   },
-                  onError: (ctx:any) => {
+                  onError: (ctx: {error: {message: string}}) => {
                     toast.error(ctx.error.message);
                   },
                   onSuccess: async () => {

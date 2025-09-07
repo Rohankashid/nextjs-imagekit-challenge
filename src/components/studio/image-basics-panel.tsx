@@ -95,17 +95,6 @@ export function ImageBasicsPanel({
     update({width: undefined, height: undefined, aspectRatio: undefined});
   };
 
-  const resetCrop = () => {
-    update({
-      cropMode: undefined,
-      focus: undefined,
-      x: undefined,
-      y: undefined,
-      xc: undefined,
-      yc: undefined,
-    });
-  };
-
   const resetFocus = () => {
     update({
       focus: undefined,

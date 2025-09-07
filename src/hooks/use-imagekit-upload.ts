@@ -142,7 +142,7 @@ export const useImageKitUpload = () => {
           // Notify listeners (e.g., media grid) that a new item is available
           if (typeof window !== "undefined" && result.data) {
             window.dispatchEvent(
-              new CustomEvent("media:uploaded", {detail: result.data as any})
+              new CustomEvent("media:uploaded", {detail: result.data})
             );
           }
         } catch {}
