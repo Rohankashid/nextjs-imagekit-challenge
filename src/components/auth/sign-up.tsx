@@ -154,23 +154,6 @@ export default function SignUp() {
               await signUp.email({
                 email,
                 password,
-                name: `${firstName} ${lastName}`,
-                image: image ? await convertImageToBase64(image) : "",
-                callbackURL: "/dashboard",
-                fetchOptions: {
-                  onResponse: () => {
-                    setLoading(false);
-                  },
-                  onRequest: () => {
-                    setLoading(true);
-                  },
-                  onError: (ctx: {error: {message: string}}) => {
-                    toast.error(ctx.error.message);
-                  },
-                  onSuccess: async () => {
-                    router.push("/dashboard");
-                  },
-                },
               });
             }}
           >

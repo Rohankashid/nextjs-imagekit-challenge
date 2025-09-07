@@ -63,7 +63,7 @@ export function PreviewCanvas({
                 setHasError(true);
                 setIsLoading(false);
                 toast.error(
-                  "Preview failed to load. If the network shows 403 Forbidden, this feature may require an enabled extension or you've hit its limit."
+                  " this feature may require an enabled extension or you've hit its limit."
                 );
               }}
             />
@@ -77,7 +77,7 @@ export function PreviewCanvas({
                 setHasError(true);
                 setIsLoading(false);
                 toast.error(
-                  "Preview failed to load. If the network shows 403 Forbidden, this feature may require an enabled extension or you've hit its limit."
+                  "this feature may require an enabled extension or you've hit its limit."
                 );
               }}
             />

@@ -6,4 +6,5 @@ export const PaginatedSearchParamsSchema = z.object({
   query: z.string().optional(),
   filter: z.string().optional(),
   sort: z.string().optional(),
+  userId: z.string(),
 });
